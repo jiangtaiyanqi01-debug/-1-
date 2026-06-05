@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='ja'>
+<head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>簿記クエストβ</title></head>
+<body style='font-family:sans-serif;max-width:900px;margin:auto'>
+<h1>📚簿記クエストβ</h1>
+<div>冒険者Lv:<span id='adv'>1</span></div>
+<div>会計士Lv:<span id='acc'>10</span></div>
+<div>推定合格率:<span id='rate'>10</span>%</div>
+<hr>
+<h3 id='q'></h3>
+<div id='ans'></div>
+<div id='msg'></div>
+
+<script>
+let data=JSON.parse(localStorage.getItem('bokiQuest')||'{"adv":1,"rate":10}');
+const qs=[
+{q:'連結会計で作成するのは？',a:['連結財務諸表','現金出納帳','納品書'],c:0},
+{q:'退職給付引当金は何に備える？',a:['退職給付','広告費','仕入'],c:0}
+];
+
+function save(){localStorage.setItem('bokiQuest',JSON.stringify(data));}
+function ui(){
+adv.textContent=data.adv;
+acc.textContent=Math.floor(data.rate);
+rate.textContent=Math.floor(data.rate);
+save();
+}
+function battle(){
+let x=qs[Math.floor(Math.random()*qs.length)];
+q.textContent=x.q;
+ans.innerHTML='';
+x.a.forEach((v,i)=>{
+ let b=document.createElement('button');
+ b.textContent=v;
+ b.onclick=()=>{
+   if(i===x.c){data.adv++;data.rate=Math.min(100,data.rate+2);msg.textContent='正解！';}
+   else{data.rate=Math.max(0,data.rate-1);msg.textContent='不正解';}
+   ui();
+   setTimeout(battle,500);
+ };
+ ans.appendChild(b);
+});
+}
+ui();battle();
+</script>
+</body></html>
